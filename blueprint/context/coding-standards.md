@@ -42,8 +42,9 @@
 - Static assets: `public/`
 - Components: `components/[feature]/ComponentName.tsx` at the repo root, imported
   via `@/components/...`
-- > TODO: no lib, action, or type folders exist yet. Put them at the repo root
-  > too (for example `lib/`) and record the choice here.
+- Shared helpers: `lib/[utility].ts` at the repo root, imported via `@/lib/...`
+- > TODO: no action or type folders exist yet. Put them at the repo root too and
+  > record the choice here.
 
 ## Naming
 
