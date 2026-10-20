@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { PLACEHOLDER_CERTIFICATE } from "@/components/certificate/placeholder";
-import type { CertificateFields, CertificateField } from "./CertificateEditor";
+import type { CertificateFields, CertificateField } from "@/lib/certificate";
 
 const FIELDS: {
   field: CertificateField;

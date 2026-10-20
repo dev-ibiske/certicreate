@@ -19,7 +19,7 @@ date on the certificate, with no hint why. Reproduced in the browser.
 **Suggested fix:** Add `max="9999-12-31"` to the date input (Chrome then limits
 the year segment to four digits and the picker cannot go past it). Proper
 error feedback for invalid dates stays with feature 8's validation.
-**Resolution:**
+**Resolution:** Still open at 0bb18c1 (re-checked by /audit independent): the date input still has no `max`. With the export route, a five-digit year now also returns 400 from `/api/export/png`, so the button shows "Could not create the PNG" while the preview shows the placeholder date; same root cause and fix.
 
 ### F-02 [P3] open - Editor state type reuses the certificate props type with a different date format
 
@@ -34,4 +34,4 @@ value. TypeScript cannot catch passing raw editor state straight to
 **Suggested fix:** Declare `CertificateFields` as its own interface (four string
 fields, `date` documented as ISO `YYYY-MM-DD` or `""`) instead of picking from
 `CertificateProps`. No behavior change; nothing is lost.
-**Resolution:**
+**Resolution:** Still open at 0bb18c1 (re-checked by /audit independent): the type moved unchanged to lib/certificate.ts:6 and is now also used by the export route and render page; the defect and fix are the same.
