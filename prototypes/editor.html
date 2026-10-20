@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Certificreate - Editor prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@400;500;700&family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme.css">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .brand { display: flex; align-items: center; gap: var(--space-2); font-weight: 600; font-size: var(--text-lg); }
+    .brand-mark {
+      width: 22px; height: 22px; border-radius: var(--radius-sm);
+      background: var(--accent); color: var(--accent-ink);
+      display: grid; place-items: center;
+      font-family: var(--font-cert-serif); font-size: var(--text-sm); font-weight: 700;
+    }
+    .topnav { display: flex; gap: var(--space-1); }
+    .ghost {
+      background: none; border: 1px solid transparent; color: var(--muted);
+      font: inherit; font-size: var(--text-sm);
+      padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); cursor: pointer;
+    }
+    .ghost:hover { color: var(--text); border-color: var(--border); background: var(--surface-raised); }
+
+    .workspace { flex: 1; display: grid; grid-template-columns: 380px 1fr; min-height: 0; }
+
+    .panel {
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      padding: var(--space-5);
+      overflow-y: auto;
+      display: flex; flex-direction: column; gap: var(--space-6);
+    }
+    .section-title {
+      margin: 0 0 var(--space-4);
+      font-size: var(--text-xs); font-weight: 600;
+      text-transform: uppercase; letter-spacing: var(--tracking-caps);
+      color: var(--muted);
+    }
+    .field { display: flex; flex-direction: column; gap: var(--space-2); margin-bottom: var(--space-4); }
+    .field label { font-size: var(--text-sm); font-weight: 500; color: var(--text); }
+    .field .hint { font-size: var(--text-xs); color: var(--faint); }
+    .input {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font: inherit;
+    }
+    .input.is-focused { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+    .field.has-error .input { border-color: var(--error); background: var(--error-soft); }
+    .field.has-error .hint { color: var(--error); }
+
+    .templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+    .tpl {
+      display: flex; flex-direction: column; gap: var(--space-2);
+      background: none; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: var(--space-2); cursor: pointer; color: var(--muted); font: inherit; font-size: var(--text-xs);
+    }
+    .tpl:hover { border-color: var(--border-strong); color: var(--text); }
+    .tpl.is-selected { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+    .thumb { aspect-ratio: 11 / 8.5; background: var(--cert-paper); border-radius: 3px; position: relative; }
+    .thumb::before, .thumb::after { content: ""; position: absolute; }
+    .thumb-black::before { inset: 8%; border: 2px solid var(--cert-border); }
+    .thumb-black::after { inset: 13%; border: 1px solid var(--cert-border); }
+    .thumb-line::before { left: 18%; right: 18%; top: 30%; height: 2px; background: var(--cert-ink); }
+    .thumb-line::after { left: 30%; right: 30%; bottom: 25%; height: 1px; background: var(--cert-rule); }
+    .thumb-emblem::before { width: 26%; aspect-ratio: 1; left: 37%; top: 22%; border-radius: 50%; border: 2px solid var(--cert-border); }
+    .thumb-emblem::after { left: 22%; right: 22%; bottom: 20%; height: 1px; background: var(--cert-rule); }
+
+    .stage {
+      display: flex; flex-direction: column;
+      padding: var(--space-5) var(--space-6);
+      min-width: 0;
+      background:
+        radial-gradient(circle at 50% 40%, var(--surface-raised), var(--bg) 70%);
+    }
+    .stage-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
+    .stage-meta { color: var(--muted); font-size: var(--text-sm); }
+    .stage-meta strong { color: var(--text); font-weight: 500; }
+    .actions { display: flex; gap: var(--space-2); }
+    .btn {
+      font: inherit; font-size: var(--text-sm); font-weight: 500;
+      padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); cursor: pointer;
+      border: 1px solid var(--border-strong); background: var(--surface-raised); color: var(--text);
+    }
+    .btn:hover { border-color: var(--muted); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+    .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+    .preview-wrap { flex: 1; display: grid; place-items: center; min-height: 0; container-type: size; }
+
+    /* Certificate artifact, matched to blueprint/references/cert-example.png.
+       Everything inside is sized in cqw so the same markup works as a scaled
+       preview and as the full-size export page. */
+    .certificate {
+      container-type: inline-size;
+      width: min(100cqw, 100cqh * 11 / 8.5);
+      aspect-ratio: 11 / 8.5;
+      background: var(--cert-paper);
+      color: var(--cert-ink);
+      box-shadow: var(--shadow-artifact);
+      position: relative;
+    }
+    .frame { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--cert-border); }
+
+    .cert-body {
+      position: absolute; inset: 7.5cqw 11cqw 6.8cqw;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .cert-title {
+      margin: 0;
+      font-family: var(--font-cert-serif); font-weight: 400;
+      font-size: var(--cert-title); line-height: 0.95;
+    }
+    .cert-subtitle {
+      font-family: var(--font-cert-serif);
+      font-size: var(--cert-subtitle); line-height: 1.1;
+    }
+    .cert-eyebrow {
+      margin-top: 3.2cqw;
+      font-family: var(--font-cert-sans); font-weight: 500;
+      font-size: var(--cert-eyebrow);
+      text-transform: uppercase; letter-spacing: var(--cert-tracking);
+    }
+    .cert-name {
+      margin: auto 0 0; width: 64%; padding-bottom: 0.9cqw;
+      font-family: var(--font-cert-sans); font-weight: 700;
+      font-size: var(--cert-name);
+      text-transform: uppercase; letter-spacing: var(--cert-tracking);
+      border-bottom: 0.25cqw solid var(--cert-rule);
+    }
+    .cert-text {
+      margin-top: 1.4cqw;
+      font-family: var(--font-cert-sans); font-size: var(--cert-body); color: var(--cert-label);
+    }
+    .cert-course {
+      margin-top: 1.6cqw;
+      font-family: var(--font-cert-sans); font-weight: 700; font-size: var(--cert-body);
+    }
+
+    .cert-footer {
+      margin-top: auto; width: 100%;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4cqw;
+    }
+    .sig { display: flex; flex-direction: column; align-items: center; }
+    .sig-value {
+      width: 64%; padding-bottom: 0.6cqw;
+      font-family: var(--font-cert-sans); font-weight: 500; font-size: var(--cert-sig);
+      text-transform: uppercase; letter-spacing: var(--cert-tracking);
+      border-bottom: 0.25cqw solid var(--cert-label);
+    }
+    .sig-label {
+      margin-top: 0.7cqw;
+      font-family: var(--font-cert-sans); font-size: var(--cert-sig-label); color: var(--cert-label);
+    }
+    .seal { width: 10.5cqw; height: 10.5cqw; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">C</span>Certificreate</div>
+    <nav class="topnav">
+      <button class="ghost" type="button">History</button>
+      <button class="ghost" type="button">Brand settings</button>
+    </nav>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel">
+      <section>
+        <h2 class="section-title">Recipient</h2>
+        <div class="field">
+          <label for="name">Recipient name</label>
+          <input id="name" class="input" value="Jordan Alvarez">
+        </div>
+        <div class="field">
+          <label for="course">Course or achievement</label>
+          <input id="course" class="input is-focused" value="Modern JavaScript From the Beginning">
+        </div>
+        <div class="field has-error">
+          <label for="date">Date</label>
+          <input id="date" class="input" value="10/40/2026">
+          <span class="hint">Enter a valid date, for example 10/20/2026.</span>
+        </div>
+        <div class="field">
+          <label for="instructor">Instructor</label>
+          <input id="instructor" class="input" value="Brad Traversy">
+          <span class="hint">Defaults from brand settings. Edit for this certificate only.</span>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="section-title">Template</h2>
+        <div class="templates">
+          <button class="tpl is-selected" type="button"><span class="thumb thumb-black"></span>Black Border</button>
+          <button class="tpl" type="button"><span class="thumb thumb-line"></span>Clean Line</button>
+          <button class="tpl" type="button"><span class="thumb thumb-emblem"></span>Emblem</button>
+        </div>
+      </section>
+    </aside>
+
+    <section class="stage">
+      <div class="stage-bar">
+        <span class="stage-meta"><strong>Black Border</strong> &middot; Landscape, 11 &times; 8.5 in</span>
+        <div class="actions">
+          <button class="btn" type="button">Download PDF</button>
+          <button class="btn btn-primary" type="button">Download PNG</button>
+        </div>
+      </div>
+
+      <div class="preview-wrap">
+        <article class="certificate" aria-label="Certificate preview">
+          <!-- notched (concave) corners on both lines, as in the reference -->
+          <svg class="frame" viewBox="0 0 1100 850" fill="none" stroke="currentColor" aria-hidden="true">
+            <path stroke-width="6" d="M52 22 H1048 A30 30 0 0 0 1078 52 V798 A30 30 0 0 0 1048 828 H52 A30 30 0 0 0 22 798 V52 A30 30 0 0 0 52 22 Z"/>
+            <path stroke-width="2" d="M66 40 H1034 A26 26 0 0 0 1060 66 V784 A26 26 0 0 0 1034 810 H66 A26 26 0 0 0 40 784 V66 A26 26 0 0 0 66 40 Z"/>
+          </svg>
+
+          <div class="cert-body">
+            <h1 class="cert-title">Certificate</h1>
+            <div class="cert-subtitle">of Completion</div>
+            <div class="cert-eyebrow">This is to certify that</div>
+
+            <div class="cert-name">Jordan Alvarez</div>
+            <div class="cert-text">Has completed the following Traversy Media course:</div>
+            <div class="cert-course">Modern JavaScript From the Beginning</div>
+
+            <div class="cert-footer">
+              <div class="sig">
+                <div class="sig-value">Brad Traversy</div>
+                <div class="sig-label">Instructor</div>
+              </div>
+              <svg class="seal" viewBox="0 0 100 100" aria-label="Logo mark" role="img">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--cert-seal-ring)" stroke-width="4"/>
+                <g fill="var(--cert-seal-mark)">
+                  <circle cx="33" cy="32" r="5.5"/>
+                  <circle cx="50" cy="32" r="5.5"/>
+                  <circle cx="67" cy="32" r="5.5"/>
+                  <circle cx="50" cy="49" r="5.5"/>
+                  <circle cx="50" cy="65" r="5.5"/>
+                  <circle cx="50" cy="80" r="4.5"/>
+                </g>
+              </svg>
+              <div class="sig">
+                <div class="sig-value">10/20/2026</div>
+                <div class="sig-label">Date</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
