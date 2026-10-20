@@ -40,9 +40,10 @@
 
 - Routes: `app/[route]/page.tsx`, with `layout.tsx` and `route.ts` beside them
 - Static assets: `public/`
-- > TODO: no shared component, lib, action, or type folders exist yet. Put the
-  > first ones at the repo root (for example `components/`, `lib/`) to match
-  > `app/`, and record the choice here.
+- Components: `components/[feature]/ComponentName.tsx` at the repo root, imported
+  via `@/components/...`
+- > TODO: no lib, action, or type folders exist yet. Put them at the repo root
+  > too (for example `lib/`) and record the choice here.
 
 ## Naming
 
@@ -58,9 +59,11 @@
   `@theme` in `app/globals.css`), no `tailwind.config.js`
 - Tailwind runs through the `@tailwindcss/turbopack` loader in `next.config.ts`,
   not PostCSS
-- Theme colors are CSS variables in `app/globals.css`; light and dark follow
-  `prefers-color-scheme`
-- Fonts: Geist and Geist Mono via `next/font/google` in `app/layout.tsx`
+- Theme colors are CSS variables in `app/globals.css`, exposed to Tailwind via
+  `@theme inline`. App chrome is dark only; the certificate stays light and
+  reads its colors from the `--cert-*` variables
+- Fonts via `next/font/google` (self-hosted) in `app/layout.tsx`: Inter for the
+  app, Quattrocento and Montserrat for the certificate
 - No inline styles
 - > TODO: no component library is installed. Decide in the project plan whether
   > to add one (such as shadcn/ui).
