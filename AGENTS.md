@@ -324,11 +324,17 @@ Package manager: npm (`package-lock.json`).
 - Build: `npm run build`
 - Production server: `npm run start`
 - Lint: `npm run lint`
+- Test: `npm run test` (Vitest, single run; fails when no tests are found)
+- Test watch: `npm run test:watch`
 
-No test command is configured, so tests are not a gate yet. Run `/tests` or
-`$tests` to add a unit test runner and update this section with the real test
-commands. There is no typecheck script or combined Verify command; `npm run
-build` type-checks as part of the Next.js build.
+Unit tests use Vitest 4 with `vitest.config.mts`. Test files sit next to their
+source as `*.test.ts`. `package.json` overrides `vite` to `^7.3.7` because
+npm 10 crashes (`Cannot read properties of null (reading 'edgesOut')`) when it
+resolves Vite 8's optional `@vitejs/devtools` peer chain. Keep the override
+until a Vitest/Vite/npm upgrade proves it is no longer needed.
+
+There is no typecheck script or combined Verify command; `npm run build`
+type-checks as part of the Next.js build.
 
 Browser testing is also opt-in. Run `/tests browser` or `$tests browser` to add
 or normalize a browser harness and document its exact command as `Browser
